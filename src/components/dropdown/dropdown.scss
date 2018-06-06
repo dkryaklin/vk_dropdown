@@ -1,0 +1,30 @@
+@import "../../css/mixin_background_2x";
+
+.dropdown {
+  width: 100%;
+  display: flex;
+  padding: 2px 2px 1px;
+  border: 1px solid #d3d9de;
+  border-radius: 2px;
+
+  &__input {
+    outline: none;
+    box-shadow: none;
+    font-size: 13px;
+    height: 14px;
+    padding: 4px 6px 7px;
+    border: none;
+    flex-grow: 1;
+
+    &::placeholder {
+      color: rgb(119, 119, 119);
+    }
+  }
+
+  &__expander {
+    width: 21px;
+    height: 25px;
+    cursor: pointer;
+    @include background-2x( 'img/dropdown_arrow', 'png', 11px, 7px, 2px 50%, no-repeat );
+  }
+}

@@ -4,7 +4,6 @@ module.exports = {
         "browser": true
     },
     "rules": {
-        "semi": ["error", "never"],
         "no-console": ["error", { allow: ["warn", "error"] }]
     }
 };

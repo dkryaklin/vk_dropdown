@@ -2,19 +2,74 @@
 
 .dropdown {
   width: 100%;
-  display: flex;
-  padding: 2px 2px 1px;
-  border: 1px solid #d3d9de;
-  border-radius: 2px;
+  font-family: 'Roboto', sans-serif;
+
+  &__selects {
+    width: 100%;
+    display: flex;
+    padding: 2px 2px 1px;
+    border: 1px solid #d3d9de;
+    border-radius: 2px;
+  }
+
+  &__select-controls {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__selected-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__selected-item {
+    align-items: center;
+    display: flex;
+    background-color: rgb(90, 128, 180);
+    color: #fff;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    font-size: 12.5px;
+    padding: 4px 5px;
+    cursor: default;
+    border-radius: 2px;
+
+    &.--new {
+      background-color: rgb(219, 226, 233);
+      color: #55677d;
+    }
+  }
+
+  &__selected-name {
+    padding: 0 4px;
+  }
+
+  &__selected-cross {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    @include background-2x( 'img/common', 'png', 32px, auto, 1px -160px, no-repeat );
+    opacity: 0.45;
+    transition: opacity 0.3s;
+
+    &.--add {
+      @include background-2x( 'img/common', 'png', 32px, auto, 0 0, no-repeat );
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   &__input {
+    width: 100%;
     outline: none;
     box-shadow: none;
     font-size: 13px;
     height: 14px;
     padding: 4px 6px 7px;
     border: none;
-    flex-grow: 1;
 
     &::placeholder {
       color: rgb(119, 119, 119);
@@ -22,9 +77,10 @@
   }
 
   &__expander {
+    flex-basis: 21px;
+    flex-shrink: 0;
     width: 21px;
-    height: 25px;
     cursor: pointer;
-    @include background-2x( 'img/dropdown_arrow', 'png', 11px, 7px, 2px 50%, no-repeat );
+    @include background-2x( 'img/dropdown_arrow', 'png', 11px, 7px, 2px 9px, no-repeat );
   }
 }

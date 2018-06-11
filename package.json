@@ -13,6 +13,7 @@
     "parcel-bundler": "^1.6.1"
   },
   "dependencies": {
-    "clssnms": "^0.0.4"
+    "clssnms": "^0.0.4",
+    "es6-object-assign": "^1.1.0"
   }
 }

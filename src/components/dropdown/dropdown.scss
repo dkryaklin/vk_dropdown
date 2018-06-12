@@ -60,12 +60,12 @@
     cursor: pointer;
     height: 12px;
     width: 12px;
-    @include background-2x( 'img/common', 'png', 32px, auto, 1px -160px, no-repeat );
+    @include background-2x( '/img/common', 'png', 32px, auto, 1px -160px, no-repeat );
     opacity: 0.45;
     transition: opacity 0.3s;
 
     &.add {
-      @include background-2x( 'img/common', 'png', 32px, auto, 0 0, no-repeat );
+      @include background-2x( '/img/common', 'png', 32px, auto, 0 0, no-repeat );
     }
 
     &:hover {
@@ -96,7 +96,7 @@
     flex-shrink: 0;
     width: 21px;
     cursor: pointer;
-    @include background-2x( 'img/dropdown_arrow', 'png', 11px, 7px, 2px 9px, no-repeat );
+    @include background-2x( '/img/dropdown_arrow', 'png', 11px, 7px, 2px 9px, no-repeat );
   }
 
   &__list-wrapper {

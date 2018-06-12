@@ -4,7 +4,7 @@ import { div } from './dom_helpers';
 import DropdownList from './dropdown_list';
 import SelectedList from './selected_list';
 import InputField from './input_field';
-import './dropdown.scss';
+import './dropdown.pcss';
 
 const classNames = clssnms('dropdown');
 
@@ -28,6 +28,7 @@ export default class Dropdown {
     };
 
     this.el = el;
+    this.mount();
     this.render();
   }
 

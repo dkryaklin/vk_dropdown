@@ -16,13 +16,23 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         use: 'babel-loader',
       }, {
-        test: /\.scss$/,
+        test: /\.pcss$/,
+        exclude: /node_modules/,
         use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader',
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
         ],
-      },
+      }
     ],
   },
   plugins: [

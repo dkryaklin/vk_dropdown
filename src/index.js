@@ -1,6 +1,6 @@
 import Dropdown from './components/dropdown';
 import mockUsers from './users.json';
-import './css/index.scss';
+import './css/index.pcss';
 
 const users = mockUsers.response.items.map((user) => {
   return {

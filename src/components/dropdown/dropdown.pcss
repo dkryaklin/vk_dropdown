@@ -60,13 +60,20 @@
     cursor: pointer;
     height: 12px;
     width: 12px;
-    /* @include background-2x( '../components/dropdown/img/common', 'png', 32px, auto, 1px -160px, no-repeat ); */
+    background-image:
+      image-set(
+        inline('./img/common.png') 1x,
+        inline('./img/common@2x.png') 2x
+      );
+    background-repeat: no-repeat;
+    background-position: 1px -160px;
+    background-size: 32px auto;
     opacity: 0.45;
     transition: opacity 0.3s;
 
-    /* &.add {
-      @include background-2x( '../components/dropdown/img/common', 'png', 32px, auto, 0 0, no-repeat );
-    } */
+    &.add {
+      background-position: 0 0;
+    }
 
     &:hover {
       opacity: 1;
@@ -96,7 +103,14 @@
     flex-shrink: 0;
     width: 21px;
     cursor: pointer;
-    /* @include background-2x( '../components/dropdown/img/dropdown_arrow', 'png', 11px, 7px, 2px 9px, no-repeat ); */
+    background-image:
+    image-set(
+      inline('./img/dropdown_arrow.png') 1x,
+      inline('./img/dropdown_arrow@2x.png') 2x
+    );
+    background-repeat: no-repeat;
+    background-position: 2px 9px;
+    background-size: 11px 7px;
   }
 
   &__list-wrapper {

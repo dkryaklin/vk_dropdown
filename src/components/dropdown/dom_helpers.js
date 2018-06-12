@@ -24,18 +24,18 @@ export const div = ({ id, className, onClick } = {}, childrens) => {
   return divEl;
 };
 
-export const input = (props = {}, childrens, _el = document.createElement('input')) => {
+export const input = (props = {}, childrens) => {
   const {
-    className, type, placeholder, onChange, value,
+    className, type, placeholder, onKeyUp, value,
   } = props;
 
-  const inputEl = _el;
+  const inputEl = document.createElement('input');
 
   inputEl.className = className;
   inputEl.type = type;
   inputEl.placeholder = placeholder;
   inputEl.value = value;
-  inputEl.onkeyup = onChange;
+  inputEl.onkeyup = onKeyUp;
 
   appendChildrens(inputEl, childrens);
 

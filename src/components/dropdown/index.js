@@ -1,8 +1,9 @@
 import clssnms from 'clssnms';
 import 'es6-object-assign/auto';
-import { div, input } from './dom_helpers';
+import { div } from './dom_helpers';
 import DropdownList from './dropdown_list';
 import SelectedList from './selected_list';
+import InputField from './input_field';
 import './dropdown.scss';
 
 const classNames = clssnms('dropdown');
@@ -56,30 +57,34 @@ export default class Dropdown {
       },
     });
 
+    this.inputField = new InputField({
+      onChange: (newValue) => {
+        this.setState({ searchValue: newValue });
+      },
+    });
+
     this.clear();
     this.render();
   }
 
   setProps(newProps) {
     this.props = Object.assign({}, this.props, newProps);
-    this.rerender();
+    this.update();
   }
 
   setState(newState) {
     this.state = Object.assign({}, this.state, newState);
-    this.rerender();
+    this.update();
   }
 
   render() {
-    this.inputAutocompleteEl = this.inputAutocomplete();
-
     const el = div({
       className: classNames(),
     }, [
       div({ className: classNames('selects'), onClick: () => this.setState({ isOpen: true }) }, [
         div({ className: classNames('select-controls') }, [
           this.selectedList.render(),
-          this.inputAutocompleteEl,
+          this.inputField.render(),
         ]),
         div({ className: classNames('expander') }),
       ]),
@@ -89,27 +94,18 @@ export default class Dropdown {
     this.el.appendChild(el);
   }
 
-  rerender() {
-    this.inputAutocompleteEl = this.inputAutocomplete(this.inputAutocompleteEl);
+  update() {
+    this.inputField.setProps({
+      isOpen: this.state.isOpen,
+      selectedItems: this.state.selectedItems,
+    });
+
     this.selectedList.setProps({
       selectedItems: this.state.selectedItems,
       isOpen: this.state.isOpen,
     });
+
     this.dropdownList.setProps({ isOpen: this.state.isOpen, items: this.state.items });
-  }
-
-  inputAutocomplete(inputEl) {
-    const props = {
-      className: classNames('input'),
-      type: 'text',
-      placeholder: 'Введите имя друга или email',
-      value: this.state.searchValue,
-      onChange: (event) => {
-        this.setState({ searchValue: event.target.value });
-      },
-    };
-
-    return input(props, [], inputEl);
   }
 
   clear() {

@@ -82,6 +82,10 @@
     padding: 4px 6px 7px;
     border: none;
 
+    &.hidden {
+      display: none;
+    }
+
     &::placeholder {
       color: rgb(119, 119, 119);
     }

@@ -42,8 +42,13 @@
     border-radius: 2px;
 
     &.new {
+      cursor: pointer;
       background-color: rgb(219, 226, 233);
       color: #55677d;
+
+      &:hover div {
+        opacity: 1;
+      }
     }
   }
 
@@ -101,6 +106,10 @@
     border-radius: 0 0 2px 2px;
     max-height: 350px;
     overflow-y: auto;
+
+    &.hidden {
+      display: none;
+    }
   }
 
   &__item {

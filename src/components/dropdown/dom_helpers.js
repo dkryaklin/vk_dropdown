@@ -10,9 +10,12 @@ const appendChildrens = (el, childrens) => {
   }
 };
 
-export const div = ({ className, onClick } = {}, childrens) => {
+export const div = ({ id, className, onClick } = {}, childrens) => {
   const divEl = document.createElement('div');
 
+  if (id) {
+    divEl.id = id;
+  }
   divEl.className = className;
   divEl.onclick = onClick;
 

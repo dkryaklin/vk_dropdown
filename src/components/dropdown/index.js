@@ -8,17 +8,17 @@ import './dropdown.scss';
 
 const classNames = clssnms('dropdown');
 
+const DEFAULT_PROPS = {
+  multiselect: true,
+  autocomplete: true,
+  autocompleteCallback: () => {},
+  showPics: true,
+  items: [],
+};
+
 export default class Dropdown {
   constructor(el, props) {
-    const defaultProps = {
-      multiselect: true,
-      autocomplete: true,
-      autocompleteCallback: () => {},
-      showPics: true,
-      items: [],
-    };
-
-    this.props = Object.assign({}, defaultProps, props);
+    this.props = Object.assign({}, DEFAULT_PROPS, props);
 
     this.state = {
       isOpen: false,
@@ -28,7 +28,10 @@ export default class Dropdown {
     };
 
     this.el = el;
+    this.render();
+  }
 
+  mount() {
     this.dropdownList = new DropdownList({
       onSelect: (selectedItem) => {
         const selectedItems = [...this.state.selectedItems, selectedItem];
@@ -63,8 +66,11 @@ export default class Dropdown {
       },
     });
 
-    this.clear();
-    this.render();
+    document.addEventListener('click', (event) => {
+      if (!this.el.contains(event.target)) {
+        this.setState({ isOpen: false });
+      }
+    });
   }
 
   setProps(newProps) {
@@ -78,6 +84,7 @@ export default class Dropdown {
   }
 
   render() {
+    this.clear();
     const el = div({
       className: classNames(),
     }, [
@@ -86,7 +93,10 @@ export default class Dropdown {
           this.selectedList.render(),
           this.inputField.render(),
         ]),
-        div({ className: classNames('expander') }),
+        div({ className: classNames('expander'), onClick: (event) => {
+          this.setState({ isOpen: !this.state.isOpen });
+          event.stopPropagation();
+        } }),
       ]),
       this.dropdownList.render(),
     ]);
@@ -112,5 +122,9 @@ export default class Dropdown {
     while (this.el.firstChild) {
       this.el.removeChild(this.el.firstChild);
     }
+  }
+
+  unmount() {
+    document.removeEventListener('click', )
   }
 }

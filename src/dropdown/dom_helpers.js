@@ -26,7 +26,7 @@ export const div = ({ id, className, onClick } = {}, childrens) => {
 
 export const input = (props = {}, childrens) => {
   const {
-    className, type, placeholder, onKeyUp, value,
+    className, type, placeholder, onKeyUp, value, disabled,
   } = props;
 
   const inputEl = document.createElement('input');
@@ -36,6 +36,9 @@ export const input = (props = {}, childrens) => {
   inputEl.placeholder = placeholder;
   inputEl.value = value;
   inputEl.onkeyup = onKeyUp;
+  if (disabled !== undefined) {
+    inputEl.disabled = disabled;
+  }
 
   appendChildrens(inputEl, childrens);
 

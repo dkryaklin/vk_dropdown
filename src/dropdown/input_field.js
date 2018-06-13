@@ -9,6 +9,7 @@ class InputField {
       onChange: () => {},
       isOpen: false,
       selectedItems: [],
+      autocomplete: true,
     }, props);
 
     this.state = {
@@ -37,19 +38,26 @@ class InputField {
 
   render() {
     this.el = input({
-      className: classNames('input'),
+      className: this.getClassName(),
       type: 'text',
       placeholder: 'Введите имя друга или email',
       value: this.state.inputValue,
       onKeyUp: this.onKeyUp,
+      disabled: !this.props.autocomplete,
     });
 
     return this.el;
   }
 
   update() {
-    this.el.className = classNames('input', {
-      hidden: this.props.selectedItems.length && !this.props.isOpen,
+    this.el.className = this.getClassName();
+    this.el.disabled = !this.props.autocomplete;
+  }
+
+  getClassName() {
+    return classNames('input', {
+      hidden: (!this.props.autocomplete && this.props.isOpen && this.props.selectedItems.length) ||
+        (this.props.selectedItems.length && !this.props.isOpen),
     });
   }
 }

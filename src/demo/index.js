@@ -15,5 +15,6 @@ const users = mockUsers.response.items.map((user) => {
 const dropdownEl = document.querySelector('#dropdown_container');
 const dropdown = new Dropdown(dropdownEl, {
   multiselect: false,
+  autocomplete: false,
   items: users,
 });

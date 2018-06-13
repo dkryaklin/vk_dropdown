@@ -36,7 +36,10 @@ export default class Dropdown {
   mount() {
     this.dropdownList = new DropdownList({ onSelect: this.selectItem });
     this.selectedList = new SelectedList({ dropSelected: this.removeSelectItem });
-    this.inputField = new InputField({ onChange: this.setSearchValue });
+    this.inputField = new InputField({
+      onChange: this.setSearchValue,
+      autocomplete: this.props.autocomplete,
+    });
 
     document.addEventListener('click', this.closeDropdown);
   }
@@ -50,13 +53,20 @@ export default class Dropdown {
   selectItem = (selectedItem) => {
     let selectedItems;
     let items;
+    let isOpen;
 
-    if (!this.props.multiselect && this.state.selectedItems.length) {
-      items = [...this.state.items, this.state.selectedItems[0]];
+    if (!this.props.multiselect) {
+      items = [...this.state.items];
+      if (this.state.selectedItems.length) {
+        items.push(this.state.selectedItems[0]);
+      }
+      
       selectedItems = [selectedItem];
+      isOpen = false;
     } else {
       selectedItems = [...this.state.selectedItems, selectedItem];
       items = [...this.state.items];
+      isOpen = true;
     }
 
     const itemIndex = items.indexOf(selectedItem);
@@ -64,7 +74,7 @@ export default class Dropdown {
       items.splice(itemIndex, 1);
     }
 
-    this.setState({ selectedItems, items });
+    this.setState({ isOpen, selectedItems, items });
   }
 
   removeSelectItem = (selectedItem) => {
@@ -125,6 +135,7 @@ export default class Dropdown {
 
   update() {
     this.inputField.setProps({
+      autocomplete: this.props.autocomplete,
       isOpen: this.state.isOpen,
       selectedItems: this.state.selectedItems,
     });

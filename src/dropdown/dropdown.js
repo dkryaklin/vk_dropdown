@@ -103,10 +103,13 @@ export default class Dropdown {
           this.selectedList.render(),
           this.inputField.render(),
         ]),
-        div({ className: classNames('expander'), onClick: (event) => {
-          this.setState({ isOpen: !this.state.isOpen });
-          event.stopPropagation();
-        } }),
+        div({
+          className: classNames('expander'),
+          onClick: (event) => {
+            this.setState({ isOpen: !this.state.isOpen });
+            event.stopPropagation();
+          },
+        }),
       ]),
       this.dropdownList.render(),
     ]);

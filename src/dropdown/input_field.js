@@ -26,7 +26,7 @@ class InputField {
     this.update();
   }
 
-  onKeyUp(event) {
+  onKeyUp = (event) => {
     const inputValue = event.target.value;
     if (this.state.inputValue !== inputValue) {
       this.props.onChange(inputValue);
@@ -41,7 +41,7 @@ class InputField {
       type: 'text',
       placeholder: 'Введите имя друга или email',
       value: this.state.inputValue,
-      onKeyUp: this.onKeyUp.bind(this),
+      onKeyUp: this.onKeyUp,
     });
 
     return this.el;

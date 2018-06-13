@@ -35,7 +35,7 @@ class SelectedList {
     return items;
   }
 
-  onClick(event) {
+  onClick = (event) => {
     const itemEl = event.target.closest(`.${classNames('selected-item')}`);
     if (itemEl && itemEl.id) {
       const itemId = parseInt(itemEl.id, 10);
@@ -57,7 +57,7 @@ class SelectedList {
   render() {
     this.el = div({
       className: classNames('selected-list'),
-      onClick: this.onClick.bind(this),
+      onClick: this.onClick,
     }, this.getItems());
     return this.el;
   }

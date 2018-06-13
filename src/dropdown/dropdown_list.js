@@ -40,7 +40,7 @@ class DropdownListWrapper {
     return this.props.isOpen && this.props.items.length;
   }
 
-  onClick(event) {
+  onClick = (event) => {
     const itemEl = event.target.closest(`.${classNames('item')}`);
     if (itemEl && itemEl.id) {
       const itemId = parseInt(itemEl.id, 10);
@@ -59,7 +59,7 @@ class DropdownListWrapper {
       className: classNames('list-wrapper', {
         hidden: !this.isOpen(),
       }),
-      onClick: this.onClick.bind(this),
+      onClick: this.onClick,
     }, [DropdownList({ isOpen: this.isOpen(), items: this.props.items })]);
     return this.el;
   }

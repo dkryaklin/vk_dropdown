@@ -50,6 +50,8 @@ class DropdownListWrapper {
         this.props.onSelect(itemsArr[0]);
       }
     }
+
+    event.stopPropagation();
   }
 
   render() {

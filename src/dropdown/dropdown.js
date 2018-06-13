@@ -1,5 +1,6 @@
 import clssnms from 'clssnms';
 import 'es6-object-assign/auto';
+import 'element-closest';
 import { div } from './dom_helpers';
 import DropdownList from './dropdown_list';
 import SelectedList from './selected_list';
@@ -43,7 +44,7 @@ export default class Dropdown {
           items.splice(itemIndex, 1);
         }
 
-        this.setState({ isOpen: false, selectedItems, items });
+        this.setState({ selectedItems, items });
       },
     });
 
@@ -67,11 +68,13 @@ export default class Dropdown {
       },
     });
 
-    document.addEventListener('click', (event) => {
-      if (!this.el.contains(event.target)) {
-        this.setState({ isOpen: false });
-      }
-    });
+    document.addEventListener('click', this.closeDropdown);
+  }
+
+  closeDropdown = (event) => {
+    if (!this.el.contains(event.target)) {
+      this.setState({ isOpen: false });
+    }
   }
 
   setProps(newProps) {
@@ -89,7 +92,13 @@ export default class Dropdown {
     const el = div({
       className: classNames(),
     }, [
-      div({ className: classNames('selects'), onClick: () => this.setState({ isOpen: true }) }, [
+      div({
+        className: classNames('selects'),
+        onClick: (event) => {
+          this.setState({ isOpen: true });
+          event.stopPropagation();
+        },
+      }, [
         div({ className: classNames('select-controls') }, [
           this.selectedList.render(),
           this.inputField.render(),
@@ -126,6 +135,6 @@ export default class Dropdown {
   }
 
   unmount() {
-    document.removeEventListener('click', )
+    document.removeEventListener('click', this.closeDropdown);
   }
 }

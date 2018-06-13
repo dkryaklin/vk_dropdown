@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/demo/index.js',
   mode: 'development',
   watch: true,
   output: {
@@ -26,19 +26,19 @@ module.exports = {
             loader: 'css-loader',
             options: {
               importLoaders: 1,
-            }
+            },
           },
           {
-            loader: 'postcss-loader'
-          }
+            loader: 'postcss-loader',
+          },
         ],
-      }
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Custom template',
-      template: './src/index.html',
+      template: './src/demo/index.html',
     }),
   ],
   devServer: {

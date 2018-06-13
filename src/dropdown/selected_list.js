@@ -4,7 +4,7 @@ import { div } from './dom_helpers';
 const classNames = clssnms('dropdown');
 
 const SelectedItem = (item = {}, isNew = false) => {
-  const label = isNew ? 'добавить' : `${item.first_name} ${item.last_name}`;
+  const label = isNew ? 'Добавить' : `${item.first_name} ${item.last_name}`;
 
   return div({ id: item.id || '-1', className: classNames('selected-item', { new: isNew }) }, [
     div({ className: classNames('selected-name') }, [label]),

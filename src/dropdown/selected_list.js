@@ -17,6 +17,7 @@ class SelectedList {
     this.props = Object.assign({}, {
       isOpen: false,
       selectedItems: [],
+      multiselect: true,
       dropSelected: () => {},
     }, props);
   }
@@ -28,7 +29,7 @@ class SelectedList {
 
   getItems() {
     const items = this.props.selectedItems.map(item => SelectedItem(item));
-    if (items.length && !this.props.isOpen) {
+    if (items.length && !this.props.isOpen && this.props.multiselect) {
       items.push(SelectedItem(undefined, true));
     }
 
@@ -49,6 +50,8 @@ class SelectedList {
       } else if (itemId === -1) {
         return;
       }
+    } else if (event.target.className === classNames('selected-list')) {
+      return;
     }
 
     event.stopPropagation();

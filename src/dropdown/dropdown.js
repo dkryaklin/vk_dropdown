@@ -34,39 +34,9 @@ export default class Dropdown {
   }
 
   mount() {
-    this.dropdownList = new DropdownList({
-      onSelect: (selectedItem) => {
-        const selectedItems = [...this.state.selectedItems, selectedItem];
-        const items = [...this.state.items];
-
-        const itemIndex = items.indexOf(selectedItem);
-        if (itemIndex !== -1) {
-          items.splice(itemIndex, 1);
-        }
-
-        this.setState({ selectedItems, items });
-      },
-    });
-
-    this.selectedList = new SelectedList({
-      dropSelected: (selectedItem) => {
-        const selectedItems = [...this.state.selectedItems];
-        const items = [...this.state.items, selectedItem];
-
-        const itemIndex = selectedItems.indexOf(selectedItem);
-        if (itemIndex !== -1) {
-          selectedItems.splice(itemIndex, 1);
-        }
-
-        this.setState({ isOpen: false, selectedItems, items });
-      },
-    });
-
-    this.inputField = new InputField({
-      onChange: (newValue) => {
-        this.setState({ searchValue: newValue });
-      },
-    });
+    this.dropdownList = new DropdownList({ onSelect: this.selectItem });
+    this.selectedList = new SelectedList({ dropSelected: this.removeSelectItem });
+    this.inputField = new InputField({ onChange: this.setSearchValue });
 
     document.addEventListener('click', this.closeDropdown);
   }
@@ -75,6 +45,42 @@ export default class Dropdown {
     if (!this.el.contains(event.target)) {
       this.setState({ isOpen: false });
     }
+  }
+
+  selectItem = (selectedItem) => {
+    let selectedItems;
+    let items;
+
+    if (!this.props.multiselect && this.state.selectedItems.length) {
+      items = [...this.state.items, this.state.selectedItems[0]];
+      selectedItems = [selectedItem];
+    } else {
+      selectedItems = [...this.state.selectedItems, selectedItem];
+      items = [...this.state.items];
+    }
+
+    const itemIndex = items.indexOf(selectedItem);
+    if (itemIndex !== -1) {
+      items.splice(itemIndex, 1);
+    }
+
+    this.setState({ selectedItems, items });
+  }
+
+  removeSelectItem = (selectedItem) => {
+    const selectedItems = [...this.state.selectedItems];
+    const items = [...this.state.items, selectedItem];
+
+    const itemIndex = selectedItems.indexOf(selectedItem);
+    if (itemIndex !== -1) {
+      selectedItems.splice(itemIndex, 1);
+    }
+
+    this.setState({ isOpen: false, selectedItems, items });
+  }
+
+  setSearchValue = (newValue) => {
+    this.setState({ searchValue: newValue });
   }
 
   setProps(newProps) {
@@ -124,11 +130,15 @@ export default class Dropdown {
     });
 
     this.selectedList.setProps({
+      multiselect: this.props.multiselect,
       selectedItems: this.state.selectedItems,
       isOpen: this.state.isOpen,
     });
 
-    this.dropdownList.setProps({ isOpen: this.state.isOpen, items: this.state.items });
+    this.dropdownList.setProps({
+      isOpen: this.state.isOpen,
+      items: this.state.items,
+    });
   }
 
   clear() {

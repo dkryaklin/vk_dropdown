@@ -1,5 +1,6 @@
 import clssnms from 'clssnms';
 import { div, img } from './dom_helpers';
+import { filterItem } from './string_helpers';
 
 const classNames = clssnms('dropdown');
 
@@ -13,13 +14,24 @@ const DropdownItem = (item = {}) => (
   ])
 );
 
-const DropdownList = ({ isOpen, items }) => {
+const EmptyList = () => div({ text: 'Пустой список :(', className: classNames('empty-list') });
+
+const DropdownList = ({ isOpen, items, searchValue }) => {
   if (isOpen) {
-    const itemsEl = items.map(item => DropdownItem(item));
+    const filteredItems = items.filter(item => filterItem(item, searchValue));
+
+    if (!filteredItems.length) {
+      return EmptyList();
+    }
+
+    // simple sort
+    filteredItems.sort((a, b) => a.id - b.id);
+
+    const itemsEl = filteredItems.map(item => DropdownItem(item));
     return div({ className: classNames('list') }, itemsEl);
   }
 
-  return div();
+  return EmptyList();
 };
 
 class DropdownListWrapper {
@@ -34,10 +46,6 @@ class DropdownListWrapper {
   setProps(newProps) {
     this.props = Object.assign({}, this.props, newProps);
     this.update();
-  }
-
-  isOpen() {
-    return this.props.isOpen && this.props.items.length;
   }
 
   onClick = (event) => {
@@ -57,18 +65,26 @@ class DropdownListWrapper {
   render() {
     this.el = div({
       className: classNames('list-wrapper', {
-        hidden: !this.isOpen(),
+        hidden: !this.props.isOpen,
       }),
       onClick: this.onClick,
-    }, [DropdownList({ isOpen: this.isOpen(), items: this.props.items })]);
+    }, [DropdownList({
+      isOpen: this.props.isOpen,
+      items: this.props.items,
+      searchValue: this.props.searchValue,
+    })]);
     return this.el;
   }
 
   update() {
     this.el.className = classNames('list-wrapper', {
-      hidden: !this.isOpen(),
+      hidden: !this.props.isOpen,
     });
-    this.el.replaceChild(DropdownList(this.props), this.el.firstChild);
+    this.el.replaceChild(DropdownList({
+      isOpen: this.props.isOpen,
+      items: this.props.items,
+      searchValue: this.props.searchValue,
+    }), this.el.firstChild);
   }
 }
 

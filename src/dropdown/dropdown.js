@@ -34,7 +34,10 @@ export default class Dropdown {
   }
 
   mount() {
-    this.dropdownList = new DropdownList({ onSelect: this.selectItem });
+    this.dropdownList = new DropdownList({
+      onSelect: this.selectItem,
+      searchValue: this.state.searchValue,
+    });
     this.selectedList = new SelectedList({ dropSelected: this.removeSelectItem });
     this.inputField = new InputField({
       onChange: this.setSearchValue,
@@ -60,7 +63,7 @@ export default class Dropdown {
       if (this.state.selectedItems.length) {
         items.push(this.state.selectedItems[0]);
       }
-      
+
       selectedItems = [selectedItem];
       isOpen = false;
     } else {
@@ -147,6 +150,7 @@ export default class Dropdown {
     });
 
     this.dropdownList.setProps({
+      searchValue: this.state.searchValue,
       isOpen: this.state.isOpen,
       items: this.state.items,
     });

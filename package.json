@@ -31,7 +31,8 @@
   "dependencies": {
     "clssnms": "^0.0.4",
     "element-closest": "^2.0.2",
-    "es6-object-assign": "^1.1.0"
+    "es6-object-assign": "^1.1.0",
+    "translit-rus-eng": "^1.0.7"
   },
   "babel": {
     "presets": [

@@ -10,7 +10,9 @@ const appendChildrens = (el, childrens) => {
   }
 };
 
-export const div = ({ id, className, onClick } = {}, childrens) => {
+export const div = ({
+  id, className = '', onClick, text = '',
+} = {}, childrens) => {
   const divEl = document.createElement('div');
 
   if (id) {
@@ -18,6 +20,7 @@ export const div = ({ id, className, onClick } = {}, childrens) => {
   }
   divEl.className = className;
   divEl.onclick = onClick;
+  divEl.textContent = text;
 
   appendChildrens(divEl, childrens);
 

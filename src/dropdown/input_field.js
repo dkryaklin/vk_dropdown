@@ -32,7 +32,7 @@ class InputField {
     if (this.state.inputValue !== inputValue) {
       this.props.onChange(inputValue);
     }
-
+    console.log(event.keyCode);
     this.setState({ inputValue: event.target.value });
   }
 

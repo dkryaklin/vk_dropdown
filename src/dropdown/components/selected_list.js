@@ -1,39 +1,47 @@
 import clssnms from 'clssnms';
-import { div } from './dom_helpers';
 
 const classNames = clssnms('dropdown');
 
-const SelectedItem = (item = {}, isNew = false) => {
-  const label = isNew ? 'Добавить' : `${item.first_name} ${item.last_name}`;
+const SelectedItem = (item, isNew = false) => {
+  const label = item && !isNew ? 'Добавить' : `${item.first_name} ${item.last_name}`;
 
-  return div({ id: item.id || '-1', className: classNames('selected-item', { new: isNew }) }, [
-    div({ className: classNames('selected-name') }, [label]),
-    div({ className: classNames('selected-cross', { add: isNew }) }),
-  ]);
+  const itemEl = document.createElement('div');
+  itemEl.id = item ? item.id : '-1';
+  itemEl.className = classNames('selected-item', { new: isNew });
+
+  const itemNameEl = document.createElement('div');
+  itemNameEl.className = classNames('selected-name');
+  itemNameEl.innerText = label;
+
+  const itemCrossEl = document.createElement('div');
+  itemCrossEl.className = classNames('selected-cross', { add: isNew });
+
+  itemEl.appendChild(itemNameEl);
+  itemEl.appendChild(itemCrossEl);
+
+  return itemEl;
 };
 
 class SelectedList {
-  constructor(props) {
-    this.props = Object.assign({}, {
-      isOpen: false,
-      selectedItems: [],
-      multiselect: true,
-      dropSelected: () => {},
-    }, props);
-  }
-
-  setProps(newProps) {
-    this.props = Object.assign({}, this.props, newProps);
-    this.update();
+  constructor(statePropsHelper) {
+    this.statePropsHelper = statePropsHelper;
+    this.statePropsHelper.stateSubscribe(['selectedItems'], this.updateList);
+    this.statePropsHelper.stateSubscribe(['isOpen'], this.updateAddButton);
+    this.itemsCache = {};
   }
 
   getItems() {
-    const items = this.props.selectedItems.map(item => SelectedItem(item));
-    if (items.length && !this.props.isOpen && this.props.multiselect) {
-      items.push(SelectedItem(undefined, true));
-    }
+    const { selectedItems } = this.statePropsHelper.getState();
 
-    return items;
+    return selectedItems.map((selectedItem) => {
+      let itemEl = this.itemsCache[selectedItem.id];
+      if (!itemEl) {
+        itemEl = SelectedItem(selectedItem);
+        this.itemsCache[selectedItem.id] = itemEl;
+      }
+
+      return itemEl;
+    });
   }
 
   onClick = (event) => {
@@ -42,7 +50,8 @@ class SelectedList {
       const itemId = parseInt(itemEl.id, 10);
 
       if (event.target.className === classNames('selected-cross')) {
-        const itemsArr = this.props.selectedItems.filter(item => itemId === item.id);
+        const { selectedItems } = this.statePropsHelper.getState();
+        const itemsArr = selectedItems.filter(item => itemId === item.id);
 
         if (itemsArr.length) {
           this.props.dropSelected(itemsArr[0]);
@@ -58,18 +67,34 @@ class SelectedList {
   }
 
   render() {
-    this.el = div({
-      className: classNames('selected-list'),
-      onClick: this.onClick,
-    }, this.getItems());
+    const selectedListEl = document.createElement('div');
+    selectedListEl.className = classNames('selected-list');
+    selectedListEl.onclick = this.onClick;
+
+    this.el = selectedListEl;
+
+    this.addItemEl = SelectedItem(null, true);
+
     return this.el;
   }
 
-  update() {
+  updateList() {
     this.clear();
     this.getItems().forEach((item) => {
       this.el.appendChild(item);
     });
+    this.updateAddButton();
+  }
+
+  updateAddButton() {
+    const { isOpen } = this.statePropsHelper.getState();
+    const { multiselect } = this.statePropsHelper.getProps();
+
+    if (this.el.childElementCount && !isOpen && multiselect) {
+      this.el.appendChild(this.addItemEl);
+    } else {
+      this.el.removeChild(this.addItemEl);
+    }
   }
 
   clear() {

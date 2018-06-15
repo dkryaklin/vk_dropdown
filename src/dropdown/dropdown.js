@@ -41,7 +41,7 @@ export default class Dropdown {
     const selectConstrolsEl = document.createElement('div');
     selectConstrolsEl.className = classNames('select-controls');
 
-    const selectedListItem = new SelectedList();
+    const selectedListItem = new SelectedList(this.statePropsHelper);
     const inputFieldItem = new InputField(this.statePropsHelper);
 
     selectConstrolsEl.appendChild(selectedListItem.render());

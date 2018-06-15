@@ -1,48 +1,20 @@
 import clssnms from 'clssnms';
 import 'es6-object-assign/auto';
 import 'element-closest';
-import { div } from './dom_helpers';
-import DropdownList from './dropdown_list';
-import SelectedList from './selected_list';
-import InputField from './input_field';
-import './dropdown.pcss';
+import DropdownList from './components/dropdown_list';
+import SelectedList from './components/selected_list';
+import InputField from './components/input_field';
+import statePropsHelper from './helpers/state_props_helper';
+import './css/dropdown.pcss';
 
 const classNames = clssnms('dropdown');
 
-const DEFAULT_PROPS = {
-  multiselect: true,
-  autocomplete: true,
-  autocompleteCallback: () => {},
-  showPics: true,
-  items: [],
-};
-
 export default class Dropdown {
   constructor(el, props) {
-    this.props = Object.assign({}, DEFAULT_PROPS, props);
-
-    this.state = {
-      isOpen: false,
-      searchValue: '',
-      items: this.props.items,
-      selectedItems: [],
-    };
-
+    statePropsHelper.setProps(props);
     this.el = el;
-    this.mount();
-    this.render();
-  }
 
-  mount() {
-    this.dropdownList = new DropdownList({
-      onSelect: this.selectItem,
-      searchValue: this.state.searchValue,
-    });
-    this.selectedList = new SelectedList({ dropSelected: this.removeSelectItem });
-    this.inputField = new InputField({
-      onChange: this.setSearchValue,
-      autocomplete: this.props.autocomplete,
-    });
+    this.render();
 
     document.addEventListener('click', this.closeDropdown);
   }
@@ -53,107 +25,45 @@ export default class Dropdown {
     }
   }
 
-  selectItem = (selectedItem) => {
-    let selectedItems;
-    let items;
-    let isOpen;
-
-    if (!this.props.multiselect) {
-      items = [...this.state.items];
-      if (this.state.selectedItems.length) {
-        items.push(this.state.selectedItems[0]);
-      }
-
-      selectedItems = [selectedItem];
-      isOpen = false;
-    } else {
-      selectedItems = [...this.state.selectedItems, selectedItem];
-      items = [...this.state.items];
-      isOpen = true;
-    }
-
-    const itemIndex = items.indexOf(selectedItem);
-    if (itemIndex !== -1) {
-      items.splice(itemIndex, 1);
-    }
-
-    this.setState({ isOpen, selectedItems, items });
-  }
-
-  removeSelectItem = (selectedItem) => {
-    const selectedItems = [...this.state.selectedItems];
-    const items = [...this.state.items, selectedItem];
-
-    const itemIndex = selectedItems.indexOf(selectedItem);
-    if (itemIndex !== -1) {
-      selectedItems.splice(itemIndex, 1);
-    }
-
-    this.setState({ isOpen: false, selectedItems, items });
-  }
-
-  setSearchValue = (newValue) => {
-    this.setState({ searchValue: newValue });
-  }
-
-  setProps(newProps) {
-    this.props = Object.assign({}, this.props, newProps);
-    this.update();
-  }
-
-  setState(newState) {
-    this.state = Object.assign({}, this.state, newState);
-    this.update();
-  }
-
   render() {
     this.clear();
-    const el = div({
-      className: classNames(),
-    }, [
-      div({
-        className: classNames('selects'),
-        onClick: (event) => {
-          this.setState({ isOpen: true });
-          event.stopPropagation();
-        },
-      }, [
-        div({ className: classNames('select-controls') }, [
-          this.selectedList.render(),
-          this.inputField.render(),
-        ]),
-        div({
-          className: classNames('expander'),
-          onClick: (event) => {
-            this.setState({ isOpen: !this.state.isOpen });
-            event.stopPropagation();
-          },
-        }),
-      ]),
-      this.dropdownList.render(),
-    ]);
 
-    this.el.appendChild(el);
-  }
+    const dropdownEl = document.createElement('div');
+    dropdownEl.className = classNames();
 
-  update() {
-    this.inputField.setProps({
-      autocomplete: this.props.autocomplete,
-      isOpen: this.state.isOpen,
-      selectedItems: this.state.selectedItems,
-    });
+    const selectEl = document.createElement('div');
+    selectEl.className = classNames('selects');
+    selectEl.onclick = (event) => {
+      statePropsHelper.setState({ isOpen: true });
+      event.stopPropagation();
+    };
 
-    this.selectedList.setProps({
-      multiselect: this.props.multiselect,
-      selectedItems: this.state.selectedItems,
-      isOpen: this.state.isOpen,
-    });
+    const selectConstrolsEl = document.createElement('div');
+    selectConstrolsEl.className = classNames('select-controls');
 
-    this.dropdownList.setProps({
-      searchValue: this.state.searchValue,
-      isOpen: this.state.isOpen,
-      items: this.state.items,
-    });
+    const selectedListItem = new SelectedList();
+    const inputFieldItem = new InputField();
+
+    selectConstrolsEl.appendChild(selectedListItem.render());
+    selectConstrolsEl.appendChild(inputFieldItem.render());
+
+    const expanderEl = document.createElement('div');
+    expanderEl.className = classNames('expander');
+    expanderEl.onclick = (event) => {
+      const { isOpen } = statePropsHelper.getState();
+      statePropsHelper.setState({ isOpen: !isOpen });
+      event.stopPropagation();
+    };
+
+    selectEl.appendChild(selectConstrolsEl);
+    selectEl.appendChild(expanderEl);
+
+    const dropdownListItem = new DropdownList();
+
+    dropdownEl.appendChild(selectEl);
+    dropdownEl.appendChild(dropdownListItem.render());
+
+    this.el.appendChild(dropdownEl);
   }
 
   clear() {
@@ -162,7 +72,8 @@ export default class Dropdown {
     }
   }
 
-  unmount() {
+  destroy() {
+    this.clear();
     document.removeEventListener('click', this.closeDropdown);
   }
 }

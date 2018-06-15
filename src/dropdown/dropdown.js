@@ -4,14 +4,14 @@ import 'element-closest';
 import DropdownList from './components/dropdown_list';
 import SelectedList from './components/selected_list';
 import InputField from './components/input_field';
-import statePropsHelper from './helpers/state_props_helper';
+import StatePropsHelper from './helpers/state_props_helper';
 import './css/dropdown.pcss';
 
 const classNames = clssnms('dropdown');
 
 export default class Dropdown {
   constructor(el, props) {
-    statePropsHelper.setProps(props);
+    this.statePropsHelper = new StatePropsHelper(props);
     this.el = el;
 
     this.render();
@@ -34,7 +34,7 @@ export default class Dropdown {
     const selectEl = document.createElement('div');
     selectEl.className = classNames('selects');
     selectEl.onclick = (event) => {
-      statePropsHelper.setState({ isOpen: true });
+      this.statePropsHelper.setState({ isOpen: true });
       event.stopPropagation();
     };
 
@@ -42,7 +42,7 @@ export default class Dropdown {
     selectConstrolsEl.className = classNames('select-controls');
 
     const selectedListItem = new SelectedList();
-    const inputFieldItem = new InputField();
+    const inputFieldItem = new InputField(this.statePropsHelper);
 
     selectConstrolsEl.appendChild(selectedListItem.render());
     selectConstrolsEl.appendChild(inputFieldItem.render());
@@ -50,8 +50,8 @@ export default class Dropdown {
     const expanderEl = document.createElement('div');
     expanderEl.className = classNames('expander');
     expanderEl.onclick = (event) => {
-      const { isOpen } = statePropsHelper.getState();
-      statePropsHelper.setState({ isOpen: !isOpen });
+      const { isOpen } = this.statePropsHelper.getState();
+      this.statePropsHelper.setState({ isOpen: !isOpen });
       event.stopPropagation();
     };
 
@@ -73,6 +73,7 @@ export default class Dropdown {
   }
 
   destroy() {
+    this.statePropsHelper.reset();
     this.clear();
     document.removeEventListener('click', this.closeDropdown);
   }

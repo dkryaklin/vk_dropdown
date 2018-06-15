@@ -1,22 +1,21 @@
+const DEFAULT_PROPS = {
+  multiselect: true,
+  autocomplete: true,
+  showPics: true,
+  items: [],
+};
 
 class StatePropsHelper {
-  props = {
-    multiselect: true,
-    autocomplete: true,
-    showPics: true,
-    items: [],
-  }
+  constructor(props) {
+    this.props = Object.assign({}, DEFAULT_PROPS, props);
 
-  store = {
-    items: [],
-  }
+    this.store = {
+      isOpen: false,
+      selectedItems: [],
+      items: [],
+    };
 
-  subscribes = {
-
-  }
-
-  setProps(newProps) {
-    this.props = Object.assign({}, this.props, newProps);
+    this.subscribes = {};
   }
 
   setState(newState) {
@@ -39,15 +38,19 @@ class StatePropsHelper {
     return this.props;
   }
 
-  stateOnChangeSubscribe(field, callback) {
-    if (!this.subscribes[field]) {
-      this.subscribes[field] = [];
-    }
+  stateSubscribe(fields, callback) {
+    fields.forEach((field) => {
+      if (!this.subscribes[field]) {
+        this.subscribes[field] = [];
+      }
 
-    this.subscribes[field].push(callback);
+      this.subscribes[field].push(callback);
+    });
+  }
+
+  reset() {
+    this.subscribes = {};
   }
 }
 
-const statePropsHelper = new StatePropsHelper();
-
-export default statePropsHelper;
+export default StatePropsHelper;

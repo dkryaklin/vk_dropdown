@@ -1,5 +1,6 @@
 import clssnms from 'clssnms';
 import { DropdownItem, EmptyList } from './stateless_components';
+import advancedSearch from '../helpers/search_helper';
 import '../css/dropdown_list.pcss';
 
 const classNames = clssnms('dropdown');
@@ -7,7 +8,7 @@ const classNames = clssnms('dropdown');
 class DropdownListWrapper {
   constructor(statePropsHelper) {
     this.statePropsHelper = statePropsHelper;
-    this.statePropsHelper.stateSubscribe(['isOpen', 'items'], this.updateList);
+    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'inputValue'], this.updateList);
     this.itemsCache = {};
   }
 
@@ -68,7 +69,7 @@ class DropdownListWrapper {
   updateList = () => {
     this.clear();
 
-    const { isOpen, items } = this.statePropsHelper.getState();
+    const { isOpen, items, inputValue } = this.statePropsHelper.getState();
 
     this.el.className = classNames('list-wrapper', { hidden: !isOpen });
     if (!isOpen) {
@@ -76,8 +77,14 @@ class DropdownListWrapper {
     }
 
     let dropdownListEl = this.emptyListEl;
+    const filteredItems = items.filter((item) => {
+      const str = `${item.first_name} ${item.last_name}`.toLowerCase();
+      return advancedSearch(str, inputValue);
+    });
 
-    const itemEls = items.map((item) => {
+    filteredItems.sort((a, b) => a.id - b.id);
+
+    const itemEls = filteredItems.map((item) => {
       let itemEl = this.itemsCache[item.id];
       if (!itemEl) {
         itemEl = DropdownItem(item);

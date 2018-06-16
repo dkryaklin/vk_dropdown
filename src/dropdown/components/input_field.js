@@ -9,7 +9,7 @@ class InputField {
   }
 
   onKeyUp = (event) => {
-    const inputValue = event.target.value;
+    const inputValue = event.target.value.toLowerCase();
     this.statePropsHelper.setState({ inputValue });
   }
 
@@ -19,7 +19,7 @@ class InputField {
     inputEl.className = classNames('input');
     inputEl.type = 'text';
     inputEl.placeholder = 'Введите имя друга или email';
-    inputEl.onKeyUp = this.onKeyUp;
+    inputEl.onkeyup = this.onKeyUp;
     inputEl.disabled = !this.statePropsHelper.getProps().autocomplete;
 
     this.el = inputEl;

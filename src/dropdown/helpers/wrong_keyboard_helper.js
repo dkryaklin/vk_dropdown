@@ -31,7 +31,6 @@ const keyboardMap = [
   ['э', "'"],
   ['ю', '.'],
   ['я', 'z'],
-  [' ', ' '],
 ];
 
 const keyboardMapObj = {};
@@ -45,7 +44,11 @@ for (let i = 0; i < keyboardMap.length; i++) {
 const wrongKeyboard = (str) => {
   let result = '';
   for (let i = 0; i < str.length; i++) {
-    result += keyboardMapObj[str[i]];
+    if (keyboardMapObj[str[i]]) {
+      result += keyboardMapObj[str[i]];
+    } else {
+      result += str[i];
+    }
   }
   return result;
 };

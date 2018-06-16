@@ -28,16 +28,14 @@ class SelectedList {
 
   removeItem(selectedItem) {
     const state = this.statePropsHelper.getState();
-
     const selectedItems = [...state.selectedItems];
-    const items = [...state.items, selectedItem];
 
     const itemIndex = selectedItems.indexOf(selectedItem);
     if (itemIndex !== -1) {
       selectedItems.splice(itemIndex, 1);
     }
 
-    this.statePropsHelper.setState({ isOpen: false, selectedItems, items });
+    this.statePropsHelper.setState({ isOpen: false, selectedItems });
   }
 
   onClick = (event) => {

@@ -6,48 +6,39 @@ import '../css/dropdown_list.pcss';
 const classNames = clssnms('dropdown');
 
 const MAX_ITEMS_AMOUNT = 20;
+const SORT_FUNCTION = (a, b) => a.id - b.id;
 
 class DropdownListWrapper {
   constructor(statePropsHelper) {
     this.statePropsHelper = statePropsHelper;
-    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'inputValue', 'extraItems'], this.updateList);
+    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'extraItems'], this.updateList);
     this.itemsCache = {};
   }
 
   selectItem = (selectedItem) => {
     const { multiselect } = this.statePropsHelper.getProps();
-    const { items, selectedItems } = this.statePropsHelper.getState();
+    const { selectedItems } = this.statePropsHelper.getState();
     const newState = {};
 
     if (!multiselect) {
-      newState.items = [...items];
-      if (selectedItems.length) {
-        newState.items.push(selectedItems[0]);
-      }
-
       newState.selectedItems = [selectedItem];
       newState.isOpen = false;
     } else {
       newState.selectedItems = [...selectedItems, selectedItem];
-      newState.items = [...items];
       newState.isOpen = true;
-    }
-
-    const itemIndex = newState.items.indexOf(selectedItem);
-    if (itemIndex !== -1) {
-      newState.items.splice(itemIndex, 1);
     }
 
     this.statePropsHelper.setState(newState);
   }
 
   onClick = (event) => {
-    const { items } = this.statePropsHelper.getState();
+    const { items, extraItems } = this.statePropsHelper.getState();
+    const allItems = [...items, ...extraItems];
 
     const itemEl = event.target.closest(`.${classNames('item')}`);
     if (itemEl && itemEl.id) {
       const itemId = parseInt(itemEl.id, 10);
-      const itemsArr = items.filter(item => itemId === item.id);
+      const itemsArr = allItems.filter(item => itemId === item.id);
 
       if (itemsArr.length) {
         this.selectItem(itemsArr[0]);
@@ -68,12 +59,10 @@ class DropdownListWrapper {
     return this.el;
   }
 
-  updateList = () => {
-    this.clear();
-
+  updateList = (newState) => {
     const { showPics } = this.statePropsHelper.getProps();
     const {
-      isOpen, items, inputValue, extraItems,
+      isOpen, items, inputValue, extraItems, selectedItems,
     } = this.statePropsHelper.getState();
 
     this.el.className = classNames('list-wrapper', { hidden: !isOpen });
@@ -84,27 +73,47 @@ class DropdownListWrapper {
     let dropdownListEl = this.emptyListEl;
 
     const filteredItemsMap = {};
-    items.forEach((item) => {
+    let filteredItems = items.filter((item) => {
       const str = `${item.first_name} ${item.last_name}`.toLowerCase();
-      if (advancedSearch(str, inputValue)) {
+      const toShow = advancedSearch(str, inputValue);
+
+      if (toShow) {
         filteredItemsMap[item.id] = item;
       }
+
+      return toShow;
     });
 
-    if (Object.keys(filteredItemsMap).length < MAX_ITEMS_AMOUNT && extraItems.length) {
+    if (filteredItems.length || newState.inputValue === undefined) {
+      this.clear();
+    } else {
+      return;
+    }
+
+    filteredItems.sort(SORT_FUNCTION);
+
+    if (filteredItems.length < MAX_ITEMS_AMOUNT && extraItems.length) {
+      extraItems.sort(SORT_FUNCTION);
+
       for (let i = 0; i < extraItems.length; i++) {
         const extraItem = extraItems[i];
-        filteredItemsMap[extraItem.id] = extraItem;
 
-        if (Object.keys(filteredItemsMap).length >= MAX_ITEMS_AMOUNT) {
+        if (!filteredItemsMap[extraItem.id]) {
+          filteredItems.push(extraItem);
+        }
+
+        if (filteredItems.length >= MAX_ITEMS_AMOUNT) {
           break;
         }
       }
     }
 
-    const filteredItems = Object.keys(filteredItemsMap).map(itemId => filteredItemsMap[itemId]);
+    const selectedItemsMap = {};
+    selectedItems.forEach((item) => {
+      selectedItemsMap[item.id] = item;
+    });
 
-    filteredItems.sort((a, b) => a.id - b.id);
+    filteredItems = filteredItems.filter(item => !selectedItemsMap[item.id]);
 
     const itemEls = filteredItems.map((item) => {
       let itemEl = this.itemsCache[item.id];

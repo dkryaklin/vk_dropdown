@@ -1,6 +1,8 @@
 import advancedSearch from '../helpers/search_helper';
 
 const MAX_EXTRA_ITEMS_AMOUNT = 20;
+const COMMON_CACHE = {};
+const DEBOUNCE_TIMEOUT = 100;
 
 class ExtraItemsHelper {
   constructor() {
@@ -16,9 +18,16 @@ class ExtraItemsHelper {
     }
 
     clearTimeout(this.debounceTimeout);
+
+    if (COMMON_CACHE[searchValue]) {
+      this.requestId = '';
+      callback(COMMON_CACHE[searchValue]);
+      return;
+    }
+
     this.debounceTimeout = setTimeout(() => {
       this.callApi(searchValue, callback);
-    }, 300);
+    }, DEBOUNCE_TIMEOUT);
   }
 
   createCallback(searchValue, callback) {
@@ -46,9 +55,8 @@ class ExtraItemsHelper {
           }
         }
 
-        if (extraItems.length) {
-          callback(extraItems);
-        }
+        callback(extraItems);
+        COMMON_CACHE[searchValue] = extraItems;
       }
     };
 

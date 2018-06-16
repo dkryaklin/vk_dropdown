@@ -10,7 +10,7 @@ class InputField {
 
   onKeyUp = (event) => {
     const inputValue = event.target.value.toLowerCase();
-    this.statePropsHelper.setState({ inputValue });
+    this.statePropsHelper.setState({ inputValue, extraItems: [] });
   }
 
   render() {

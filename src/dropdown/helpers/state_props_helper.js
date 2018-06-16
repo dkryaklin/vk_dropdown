@@ -27,7 +27,7 @@ class StatePropsHelper {
     Object.keys(newState).forEach((field) => {
       if (this.subscribes[field]) {
         this.subscribes[field].forEach((callback) => {
-          callback(newState[field]);
+          callback(newState);
         });
       }
     });

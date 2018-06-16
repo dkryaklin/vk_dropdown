@@ -72,11 +72,11 @@ export default class Dropdown {
     this.el.appendChild(dropdownEl);
   }
 
-  update = (isOpen) => {
+  update = ({ isOpen }) => {
     this.selectEl.className = classNames('selects', { open: isOpen });
   }
 
-  updateExtraItems = (inputValue) => {
+  updateExtraItems = ({ inputValue }) => {
     this.extraItemsHelper.getItems(inputValue, (extraItems) => {
       this.statePropsHelper.setState({ extraItems });
     });

@@ -5,10 +5,12 @@ import '../css/dropdown_list.pcss';
 
 const classNames = clssnms('dropdown');
 
+const MAX_ITEMS_AMOUNT = 20;
+
 class DropdownListWrapper {
   constructor(statePropsHelper) {
     this.statePropsHelper = statePropsHelper;
-    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'inputValue'], this.updateList);
+    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'inputValue', 'extraItems'], this.updateList);
     this.itemsCache = {};
   }
 
@@ -70,7 +72,9 @@ class DropdownListWrapper {
     this.clear();
 
     const { showPics } = this.statePropsHelper.getProps();
-    const { isOpen, items, inputValue } = this.statePropsHelper.getState();
+    const {
+      isOpen, items, inputValue, extraItems,
+    } = this.statePropsHelper.getState();
 
     this.el.className = classNames('list-wrapper', { hidden: !isOpen });
     if (!isOpen) {
@@ -78,10 +82,27 @@ class DropdownListWrapper {
     }
 
     let dropdownListEl = this.emptyListEl;
-    const filteredItems = items.filter((item) => {
+
+    const filteredItemsMap = {};
+    items.forEach((item) => {
       const str = `${item.first_name} ${item.last_name}`.toLowerCase();
-      return advancedSearch(str, inputValue);
+      if (advancedSearch(str, inputValue)) {
+        filteredItemsMap[item.id] = item;
+      }
     });
+
+    if (Object.keys(filteredItemsMap).length < MAX_ITEMS_AMOUNT && extraItems.length) {
+      for (let i = 0; i < extraItems.length; i++) {
+        const extraItem = extraItems[i];
+        filteredItemsMap[extraItem.id] = extraItem;
+
+        if (Object.keys(filteredItemsMap).length >= MAX_ITEMS_AMOUNT) {
+          break;
+        }
+      }
+    }
+
+    const filteredItems = Object.keys(filteredItemsMap).map(itemId => filteredItemsMap[itemId]);
 
     filteredItems.sort((a, b) => a.id - b.id);
 

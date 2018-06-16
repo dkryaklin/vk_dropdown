@@ -10,6 +10,7 @@ const DEFAULT_STATE = {
   inputValue: '',
   selectedItems: [],
   items: [],
+  extraItems: [],
 };
 
 class StatePropsHelper {

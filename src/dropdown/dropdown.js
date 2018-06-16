@@ -5,16 +5,20 @@ import DropdownList from './components/dropdown_list';
 import SelectedList from './components/selected_list';
 import InputField from './components/input_field';
 import StatePropsHelper from './helpers/state_props_helper';
+import ExtraItemsHelper from './helpers/extra_items_helper';
 import './css/dropdown.pcss';
 
 const classNames = clssnms('dropdown');
 
 export default class Dropdown {
   constructor(el, props) {
+    this.extraItemsHelper = new ExtraItemsHelper();
+
     this.statePropsHelper = new StatePropsHelper(props);
     this.statePropsHelper.stateSubscribe(['isOpen'], this.update);
-    this.el = el;
+    this.statePropsHelper.stateSubscribe(['inputValue'], this.updateExtraItems);
 
+    this.el = el;
     this.render();
 
     document.addEventListener('click', this.closeDropdown);
@@ -70,6 +74,12 @@ export default class Dropdown {
 
   update = (isOpen) => {
     this.selectEl.className = classNames('selects', { open: isOpen });
+  }
+
+  updateExtraItems = (inputValue) => {
+    this.extraItemsHelper.getItems(inputValue, (extraItems) => {
+      this.statePropsHelper.setState({ extraItems });
+    });
   }
 
   clear() {

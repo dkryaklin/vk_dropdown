@@ -24,7 +24,7 @@ export const DropdownItem = (item, showPics) => {
 
   const descEl = document.createElement('div');
   descEl.className = classNames('item-desc');
-  descEl.innerText = item.university_name;
+  descEl.innerText = item.domain || '';
 
   itemDataEl.appendChild(titleEl);
   itemDataEl.appendChild(descEl);

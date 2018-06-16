@@ -14,11 +14,12 @@ class InputField {
   }
 
   render() {
+    const { placeholderLabel } = this.statePropsHelper.getProps();
     const inputEl = document.createElement('input');
 
     inputEl.className = classNames('input');
     inputEl.type = 'text';
-    inputEl.placeholder = 'Введите имя друга или email';
+    inputEl.placeholder = placeholderLabel;
     inputEl.onkeyup = this.onKeyUp;
     inputEl.disabled = !this.statePropsHelper.getProps().autocomplete;
 

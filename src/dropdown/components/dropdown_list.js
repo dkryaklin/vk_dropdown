@@ -49,18 +49,20 @@ class DropdownListWrapper {
   }
 
   render() {
+    const { emptyListLabel } = this.statePropsHelper.getProps();
+
     const dropdownWrapperEl = document.createElement('div');
     dropdownWrapperEl.className = classNames('list-wrapper', { hidden: true });
     dropdownWrapperEl.onclick = this.onClick;
 
     this.el = dropdownWrapperEl;
-    this.emptyListEl = EmptyList();
+    this.emptyListEl = EmptyList(emptyListLabel);
 
     return this.el;
   }
 
   updateList = (newState) => {
-    const { showPics } = this.statePropsHelper.getProps();
+    const { showPics, searchOnServer } = this.statePropsHelper.getProps();
     const {
       isOpen, items, inputValue, extraItems, selectedItems,
     } = this.statePropsHelper.getState();
@@ -84,7 +86,7 @@ class DropdownListWrapper {
       return toShow;
     });
 
-    if (filteredItems.length || newState.inputValue === undefined) {
+    if (filteredItems.length || newState.inputValue === undefined || !searchOnServer) {
       this.clear();
     } else {
       return;

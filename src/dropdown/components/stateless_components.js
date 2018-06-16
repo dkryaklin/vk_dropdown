@@ -34,11 +34,11 @@ export const DropdownItem = (item, showPics) => {
   return itemEl;
 };
 
-export const EmptyList = () => {
+export const EmptyList = (label) => {
   const emptyListEl = document.createElement('div');
 
   emptyListEl.className = classNames('empty-list');
-  emptyListEl.innerText = 'Пустой список :(';
+  emptyListEl.innerText = label;
 
   return emptyListEl;
 };

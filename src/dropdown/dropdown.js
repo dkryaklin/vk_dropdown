@@ -77,6 +77,11 @@ export default class Dropdown {
   }
 
   updateExtraItems = ({ inputValue }) => {
+    const { searchOnServer } = this.statePropsHelper.getProps();
+    if (!searchOnServer) {
+      return;
+    }
+
     this.extraItemsHelper.getItems(inputValue, (extraItems) => {
       this.statePropsHelper.setState({ extraItems });
     });
@@ -86,6 +91,11 @@ export default class Dropdown {
     while (this.el.firstChild) {
       this.el.removeChild(this.el.firstChild);
     }
+  }
+
+  getSelectedItems() {
+    const { selectedItems } = this.statePropsHelper.getState();
+    return selectedItems;
   }
 
   destroy() {

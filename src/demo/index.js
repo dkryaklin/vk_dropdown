@@ -15,4 +15,5 @@ const dropdown = new Dropdown(dropdownEl, {
   autocomplete: true,
   items: users,
   showPics: true,
+  searchOnServer: false,
 });

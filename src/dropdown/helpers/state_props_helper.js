@@ -3,6 +3,9 @@ const DEFAULT_PROPS = {
   autocomplete: true,
   showPics: true,
   items: [],
+  placeholderLabel: 'Введите имя или фамилию',
+  emptyListLabel: 'Пустой список',
+  searchOnServer: true,
 };
 
 const DEFAULT_STATE = {

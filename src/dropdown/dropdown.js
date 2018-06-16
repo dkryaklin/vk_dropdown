@@ -21,11 +21,12 @@ export default class Dropdown {
     this.el = el;
     this.render();
 
-    document.addEventListener('click', this.closeDropdown);
+    document.addEventListener('click', this.closeDropdown, true);
   }
 
   closeDropdown = (event) => {
-    if (!this.el.contains(event.target)) {
+    const dropdownEl = event.target.closest(`.${classNames()}`);
+    if (dropdownEl !== this.el) {
       this.statePropsHelper.setState({ isOpen: false });
     }
   }

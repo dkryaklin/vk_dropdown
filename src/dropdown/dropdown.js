@@ -21,7 +21,7 @@ export default class Dropdown {
 
   closeDropdown = (event) => {
     if (!this.el.contains(event.target)) {
-      this.setState({ isOpen: false });
+      this.statePropsHelper.setState({ isOpen: false });
     }
   }
 
@@ -58,7 +58,7 @@ export default class Dropdown {
     selectEl.appendChild(selectConstrolsEl);
     selectEl.appendChild(expanderEl);
 
-    const dropdownListItem = new DropdownList();
+    const dropdownListItem = new DropdownList(this.statePropsHelper);
 
     dropdownEl.appendChild(selectEl);
     dropdownEl.appendChild(dropdownListItem.render());

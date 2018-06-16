@@ -55,7 +55,8 @@ class DropdownListWrapper {
 
   render() {
     const dropdownWrapperEl = document.createElement('div');
-    dropdownWrapperEl.className = classNames('list-wrapper');
+    dropdownWrapperEl.className = classNames('list-wrapper', { hidden: true });
+    dropdownWrapperEl.onclick = this.onClick;
 
     this.el = dropdownWrapperEl;
     this.emptyListEl = EmptyList();
@@ -63,7 +64,7 @@ class DropdownListWrapper {
     return this.el;
   }
 
-  updateList() {
+  updateList = () => {
     this.clear();
 
     const { isOpen, items } = this.statePropsHelper.getState();

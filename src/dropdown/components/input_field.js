@@ -16,16 +16,17 @@ class InputField {
   render() {
     const inputEl = document.createElement('input');
 
-    inputEl.className = this.className('input');
+    inputEl.className = classNames('input');
     inputEl.type = 'text';
     inputEl.placeholder = 'Введите имя друга или email';
     inputEl.onKeyUp = this.onKeyUp;
     inputEl.disabled = !this.statePropsHelper.getProps().autocomplete;
 
-    return inputEl;
+    this.el = inputEl;
+    return this.el;
   }
 
-  update() {
+  update = () => {
     const { autocomplete } = this.statePropsHelper.getProps();
     const { isOpen, selectedItems } = this.statePropsHelper.getState();
     const hidden = (!autocomplete && isOpen && selectedItems.length)

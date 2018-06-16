@@ -41,7 +41,7 @@ export const EmptyList = () => {
 };
 
 export const SelectedItem = (item, isNew = false) => {
-  const label = item && !isNew ? 'Добавить' : `${item.first_name} ${item.last_name}`;
+  const label = item && !isNew ? `${item.first_name} ${item.last_name}` : 'Добавить';
 
   const itemEl = document.createElement('div');
   itemEl.id = item ? item.id : '-1';

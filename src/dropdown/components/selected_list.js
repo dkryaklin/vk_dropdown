@@ -49,7 +49,7 @@ class SelectedList {
         const itemsArr = selectedItems.filter(item => itemId === item.id);
 
         if (itemsArr.length) {
-          this.props.dropSelected(itemsArr[0]);
+          this.removeItem(itemsArr[0]);
         }
       } else if (itemId === -1) {
         return;
@@ -73,21 +73,24 @@ class SelectedList {
     return this.el;
   }
 
-  updateList() {
+  updateList = () => {
     this.clear();
+    this.attachedAddButton = false;
     this.getItems().forEach((item) => {
       this.el.appendChild(item);
     });
     this.updateAddButton();
   }
 
-  updateAddButton() {
+  updateAddButton = () => {
     const { isOpen } = this.statePropsHelper.getState();
     const { multiselect } = this.statePropsHelper.getProps();
 
     if (this.el.childElementCount && !isOpen && multiselect) {
+      this.attachedAddButton = true;
       this.el.appendChild(this.addItemEl);
-    } else {
+    } else if (this.attachedAddButton) {
+      this.attachedAddButton = false;
       this.el.removeChild(this.addItemEl);
     }
   }

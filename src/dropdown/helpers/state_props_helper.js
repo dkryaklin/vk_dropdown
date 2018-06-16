@@ -15,7 +15,7 @@ const DEFAULT_STATE = {
 class StatePropsHelper {
   constructor(props) {
     this.props = Object.assign({}, DEFAULT_PROPS, props);
-    this.store = DEFAULT_STATE;
+    this.state = Object.assign({}, DEFAULT_STATE, { items: this.props.items });
 
     this.subscribes = {};
   }

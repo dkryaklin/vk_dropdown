@@ -12,6 +12,7 @@ const classNames = clssnms('dropdown');
 export default class Dropdown {
   constructor(el, props) {
     this.statePropsHelper = new StatePropsHelper(props);
+    this.statePropsHelper.stateSubscribe(['isOpen'], this.update);
     this.el = el;
 
     this.render();
@@ -37,6 +38,7 @@ export default class Dropdown {
       this.statePropsHelper.setState({ isOpen: true });
       event.stopPropagation();
     };
+    this.selectEl = selectEl;
 
     const selectConstrolsEl = document.createElement('div');
     selectConstrolsEl.className = classNames('select-controls');
@@ -64,6 +66,10 @@ export default class Dropdown {
     dropdownEl.appendChild(dropdownListItem.render());
 
     this.el.appendChild(dropdownEl);
+  }
+
+  update = (isOpen) => {
+    this.selectEl.className = classNames('selects', { open: isOpen });
   }
 
   clear() {

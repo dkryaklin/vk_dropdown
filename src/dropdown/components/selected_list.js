@@ -1,5 +1,6 @@
 import clssnms from 'clssnms';
 import { SelectedItem } from './stateless_components';
+import '../css/selected_list.pcss';
 
 const classNames = clssnms('dropdown');
 

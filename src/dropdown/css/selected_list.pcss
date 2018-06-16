@@ -1,0 +1,58 @@
+.dropdown {
+  &__selected-list {
+    flex-basis: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__selected-item {
+    align-items: center;
+    display: flex;
+    background-color: rgb(90, 128, 180);
+    color: #fff;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    font-size: 12.5px;
+    padding: 4px 5px;
+    cursor: default;
+    border-radius: 2px;
+
+    &.new {
+      cursor: pointer;
+      background-color: rgb(219, 226, 233);
+      color: #55677d;
+
+      &:hover div {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__selected-name {
+    padding: 0 4px;
+  }
+
+  &__selected-cross {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    background-image:
+      image-set(
+        inline('./img/common.png') 1x,
+        inline('./img/common@2x.png') 2x
+      );
+    background-repeat: no-repeat;
+    background-position: 1px -160px;
+    background-size: 32px auto;
+    opacity: 0.45;
+    transition: opacity 0.3s;
+
+    &.add {
+      background-position: 0 0;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

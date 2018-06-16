@@ -1,10 +1,11 @@
 {
   "name": "vk_dropdown",
   "version": "1.0.0",
-  "main": "dist/dropdown.js",
+  "main": "lib/dropdown.js",
   "scripts": {
     "start": "webpack-dev-server --hot --host 0.0.0.0",
-    "build-demo": "./node_modules/.bin/webpack --config=webpack.config.prod.demo.js"
+    "build-demo": "./node_modules/.bin/webpack --config=webpack.config.prod.demo.js",
+    "build-lib": "./node_modules/.bin/webpack --config=webpack.config.prod.lib.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

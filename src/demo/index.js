@@ -15,4 +15,5 @@ const dropdown = new Dropdown(dropdownEl, {
   multiselect: true,
   autocomplete: true,
   items: users,
+  showPics: true,
 });

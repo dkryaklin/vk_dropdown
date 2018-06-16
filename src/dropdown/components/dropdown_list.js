@@ -69,6 +69,7 @@ class DropdownListWrapper {
   updateList = () => {
     this.clear();
 
+    const { showPics } = this.statePropsHelper.getProps();
     const { isOpen, items, inputValue } = this.statePropsHelper.getState();
 
     this.el.className = classNames('list-wrapper', { hidden: !isOpen });
@@ -87,7 +88,7 @@ class DropdownListWrapper {
     const itemEls = filteredItems.map((item) => {
       let itemEl = this.itemsCache[item.id];
       if (!itemEl) {
-        itemEl = DropdownItem(item);
+        itemEl = DropdownItem(item, showPics);
         this.itemsCache[item.id] = itemEl;
       }
 

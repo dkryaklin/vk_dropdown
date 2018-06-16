@@ -2,14 +2,18 @@ import clssnms from 'clssnms';
 
 const classNames = clssnms('dropdown');
 
-export const DropdownItem = (item) => {
+export const DropdownItem = (item, showPics) => {
   const itemEl = document.createElement('div');
   itemEl.className = classNames('item');
   itemEl.id = item.id;
 
-  const imgEl = document.createElement('img');
-  imgEl.className = classNames('item-img');
-  imgEl.src = item.photo_100;
+  if (showPics) {
+    const imgEl = document.createElement('img');
+    imgEl.className = classNames('item-img');
+    imgEl.src = item.photo_100;
+
+    itemEl.appendChild(imgEl);
+  }
 
   const itemDataEl = document.createElement('div');
   itemDataEl.className = classNames('item-data');
@@ -25,7 +29,6 @@ export const DropdownItem = (item) => {
   itemDataEl.appendChild(titleEl);
   itemDataEl.appendChild(descEl);
 
-  itemEl.appendChild(imgEl);
   itemEl.appendChild(itemDataEl);
 
   return itemEl;

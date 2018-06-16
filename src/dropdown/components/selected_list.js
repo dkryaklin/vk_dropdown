@@ -1,26 +1,7 @@
 import clssnms from 'clssnms';
+import { SelectedItem } from './stateless_components';
 
 const classNames = clssnms('dropdown');
-
-const SelectedItem = (item, isNew = false) => {
-  const label = item && !isNew ? 'Добавить' : `${item.first_name} ${item.last_name}`;
-
-  const itemEl = document.createElement('div');
-  itemEl.id = item ? item.id : '-1';
-  itemEl.className = classNames('selected-item', { new: isNew });
-
-  const itemNameEl = document.createElement('div');
-  itemNameEl.className = classNames('selected-name');
-  itemNameEl.innerText = label;
-
-  const itemCrossEl = document.createElement('div');
-  itemCrossEl.className = classNames('selected-cross', { add: isNew });
-
-  itemEl.appendChild(itemNameEl);
-  itemEl.appendChild(itemCrossEl);
-
-  return itemEl;
-};
 
 class SelectedList {
   constructor(statePropsHelper) {
@@ -42,6 +23,20 @@ class SelectedList {
 
       return itemEl;
     });
+  }
+
+  removeItem(selectedItem) {
+    const state = this.statePropsHelper.getState();
+
+    const selectedItems = [...state.selectedItems];
+    const items = [...state.items, selectedItem];
+
+    const itemIndex = selectedItems.indexOf(selectedItem);
+    if (itemIndex !== -1) {
+      selectedItems.splice(itemIndex, 1);
+    }
+
+    this.statePropsHelper.setState({ isOpen: false, selectedItems, items });
   }
 
   onClick = (event) => {

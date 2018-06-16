@@ -1,61 +1,52 @@
 import clssnms from 'clssnms';
-import { div, img } from './dom_helpers';
-import { filterItem } from './string_helpers';
+import { DropdownItem, EmptyList } from './stateless_components';
 
 const classNames = clssnms('dropdown');
 
-const DropdownItem = (item = {}) => (
-  div({ className: classNames('item'), id: item.id }, [
-    img({ className: classNames('item-img'), src: item.photo_100 }),
-    div({ className: classNames('item-data') }, [
-      div({ className: classNames('item-title') }, [`${item.first_name} ${item.last_name}`]),
-      div({ className: classNames('item-desc') }, [item.university_name]),
-    ]),
-  ])
-);
+class DropdownListWrapper {
+  constructor(statePropsHelper) {
+    this.statePropsHelper = statePropsHelper;
+    this.statePropsHelper.stateSubscribe(['isOpen', 'items'], this.updateList);
+    this.itemsCache = {};
+  }
 
-const EmptyList = () => div({ text: 'Пустой список :(', className: classNames('empty-list') });
+  selectItem = (selectedItem) => {
+    const { multiselect } = this.statePropsHelper.getProps();
+    const { items, selectedItems } = this.statePropsHelper.getState();
+    const newState = {};
 
-const DropdownList = ({ isOpen, items, searchValue }) => {
-  if (isOpen) {
-    const filteredItems = items.filter(item => filterItem(item, searchValue));
+    if (!multiselect) {
+      newState.items = [...items];
+      if (selectedItems.length) {
+        newState.items.push(selectedItems[0]);
+      }
 
-    if (!filteredItems.length) {
-      return EmptyList();
+      newState.selectedItems = [selectedItem];
+      newState.isOpen = false;
+    } else {
+      newState.selectedItems = [...selectedItems, selectedItem];
+      newState.items = [...items];
+      newState.isOpen = true;
     }
 
-    // simple sort
-    filteredItems.sort((a, b) => a.id - b.id);
+    const itemIndex = newState.items.indexOf(selectedItem);
+    if (itemIndex !== -1) {
+      newState.items.splice(itemIndex, 1);
+    }
 
-    const itemsEl = filteredItems.map(item => DropdownItem(item));
-    return div({ className: classNames('list') }, itemsEl);
-  }
-
-  return EmptyList();
-};
-
-class DropdownListWrapper {
-  constructor(props) {
-    this.props = Object.assign({}, {
-      isOpen: false,
-      items: [],
-      onSelect: () => {},
-    }, props);
-  }
-
-  setProps(newProps) {
-    this.props = Object.assign({}, this.props, newProps);
-    this.update();
+    this.statePropsHelper.setState(newState);
   }
 
   onClick = (event) => {
+    const { items } = this.statePropsHelper.getState();
+
     const itemEl = event.target.closest(`.${classNames('item')}`);
     if (itemEl && itemEl.id) {
       const itemId = parseInt(itemEl.id, 10);
-      const itemsArr = this.props.items.filter(item => itemId === item.id);
+      const itemsArr = items.filter(item => itemId === item.id);
 
       if (itemsArr.length) {
-        this.props.onSelect(itemsArr[0]);
+        this.selectItem(itemsArr[0]);
       }
     }
 
@@ -63,28 +54,51 @@ class DropdownListWrapper {
   }
 
   render() {
-    this.el = div({
-      className: classNames('list-wrapper', {
-        hidden: !this.props.isOpen,
-      }),
-      onClick: this.onClick,
-    }, [DropdownList({
-      isOpen: this.props.isOpen,
-      items: this.props.items,
-      searchValue: this.props.searchValue,
-    })]);
+    const dropdownWrapperEl = document.createElement('div');
+    dropdownWrapperEl.className = classNames('list-wrapper');
+
+    this.el = dropdownWrapperEl;
+    this.emptyListEl = EmptyList();
+
     return this.el;
   }
 
-  update() {
-    this.el.className = classNames('list-wrapper', {
-      hidden: !this.props.isOpen,
+  updateList() {
+    this.clear();
+
+    const { isOpen, items } = this.statePropsHelper.getState();
+
+    this.el.className = classNames('list-wrapper', { hidden: !isOpen });
+    if (!isOpen) {
+      return;
+    }
+
+    let dropdownListEl = this.emptyListEl;
+
+    const itemEls = items.map((item) => {
+      let itemEl = this.itemsCache[item.id];
+      if (!itemEl) {
+        itemEl = DropdownItem(item);
+        this.itemsCache[item.id] = itemEl;
+      }
+
+      return itemEl;
     });
-    this.el.replaceChild(DropdownList({
-      isOpen: this.props.isOpen,
-      items: this.props.items,
-      searchValue: this.props.searchValue,
-    }), this.el.firstChild);
+
+    if (itemEls.length) {
+      dropdownListEl = document.createElement('div');
+      dropdownListEl.className = classNames('list');
+
+      itemEls.forEach(itemEl => dropdownListEl.appendChild(itemEl));
+    }
+
+    this.el.appendChild(dropdownListEl);
+  }
+
+  clear() {
+    while (this.el.firstChild) {
+      this.el.removeChild(this.el.firstChild);
+    }
   }
 }
 

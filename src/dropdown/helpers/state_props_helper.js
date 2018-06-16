@@ -5,15 +5,17 @@ const DEFAULT_PROPS = {
   items: [],
 };
 
+const DEFAULT_STATE = {
+  isOpen: false,
+  inputValue: '',
+  selectedItems: [],
+  items: [],
+};
+
 class StatePropsHelper {
   constructor(props) {
     this.props = Object.assign({}, DEFAULT_PROPS, props);
-
-    this.store = {
-      isOpen: false,
-      selectedItems: [],
-      items: [],
-    };
+    this.store = DEFAULT_STATE;
 
     this.subscribes = {};
   }

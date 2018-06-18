@@ -37,10 +37,6 @@ class ExtraItemsHelper {
     this.requestId = requestId;
 
     this.callbacks[requestId] = (body) => {
-      if (this.requestId !== requestId) {
-        return;
-      }
-
       if (body && body.response && body.response.items) {
         const extraItems = [];
         for (let i = 0; i < body.response.items.length; i++) {
@@ -55,8 +51,11 @@ class ExtraItemsHelper {
           }
         }
 
-        callback(extraItems);
         COMMON_CACHE[searchValue] = extraItems;
+
+        if (this.requestId === requestId) {
+          callback(extraItems);
+        }
       }
     };
 

@@ -14,14 +14,21 @@ class InputField {
   }
 
   render() {
-    const { placeholderLabel } = this.statePropsHelper.getProps();
-    const inputEl = document.createElement('input');
+    const { placeholderLabel, autocomplete } = this.statePropsHelper.getProps();
 
-    inputEl.className = classNames('input');
-    inputEl.type = 'text';
-    inputEl.placeholder = placeholderLabel;
-    inputEl.onkeyup = this.onKeyUp;
-    inputEl.disabled = !this.statePropsHelper.getProps().autocomplete;
+    let inputEl;
+    if (autocomplete) {
+      inputEl = document.createElement('input');
+
+      inputEl.className = classNames('input');
+      inputEl.type = 'text';
+      inputEl.placeholder = placeholderLabel;
+      inputEl.onkeyup = this.onKeyUp;
+    } else {
+      inputEl = document.createElement('div');
+      inputEl.className = classNames('input', { disabled: true });
+      inputEl.innerText = placeholderLabel;
+    }
 
     this.el = inputEl;
     return this.el;
@@ -33,7 +40,7 @@ class InputField {
     const hidden = (!autocomplete && isOpen && selectedItems.length)
       || (selectedItems.length && !isOpen);
 
-    this.el.className = classNames('input', { hidden });
+    this.el.className = classNames('input', { hidden, disabled: !autocomplete });
   }
 }
 

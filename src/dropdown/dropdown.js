@@ -26,7 +26,7 @@ export default class Dropdown {
 
   closeDropdown = (event) => {
     const dropdownEl = event.target.closest(`.${classNames()}`);
-    if (dropdownEl !== this.el) {
+    if (dropdownEl !== this.el && event.target.className !== classNames('expander')) {
       this.statePropsHelper.setState({ isOpen: false });
     }
   }

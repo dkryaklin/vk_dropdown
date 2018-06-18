@@ -4,6 +4,7 @@
   "main": "lib/dropdown.js",
   "scripts": {
     "start": "webpack-dev-server --hot --host 0.0.0.0",
+    "build": "yarn build-demo && yarn build-lib",
     "build-demo": "./node_modules/.bin/webpack --config=webpack.config.prod.demo.js",
     "build-lib": "./node_modules/.bin/webpack --config=webpack.config.prod.lib.js"
   },

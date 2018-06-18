@@ -27,7 +27,7 @@ class InputField {
     } else {
       inputEl = document.createElement('div');
       inputEl.className = classNames('input', { disabled: true });
-      inputEl.innerText = placeholderLabel;
+      inputEl.innerText = '';
     }
 
     this.el = inputEl;

@@ -57,6 +57,14 @@ class DropdownListWrapper {
 
     this.el = dropdownWrapperEl;
     this.emptyListEl = EmptyList(emptyListLabel);
+    this.emptyListEl.style.display = 'none';
+
+    this.dropdownListEl = document.createElement('div');
+    this.dropdownListEl.className = classNames('list');
+    this.dropdownListEl.style.display = 'none';
+
+    this.el.appendChild(this.emptyListEl);
+    this.el.appendChild(this.dropdownListEl);
 
     return this.el;
   }
@@ -72,8 +80,6 @@ class DropdownListWrapper {
       return;
     }
 
-    let dropdownListEl = this.emptyListEl;
-
     const filteredItemsMap = {};
     let filteredItems = items.filter((item) => {
       const str = `${item.first_name} ${item.last_name}`.toLowerCase();
@@ -86,9 +92,7 @@ class DropdownListWrapper {
       return toShow;
     });
 
-    if (filteredItems.length || newState.inputValue === undefined || !searchOnServer) {
-      this.clear();
-    } else {
+    if (!(filteredItems.length || newState.inputValue === undefined || !searchOnServer)) {
       return;
     }
 
@@ -128,18 +132,24 @@ class DropdownListWrapper {
     });
 
     if (itemEls.length) {
-      dropdownListEl = document.createElement('div');
-      dropdownListEl.className = classNames('list');
+      while (itemEls.length < this.dropdownListEl.childElementCount) {
+        this.dropdownListEl.removeChild(this.dropdownListEl.lastChild);
+      }
 
-      itemEls.forEach(itemEl => dropdownListEl.appendChild(itemEl));
-    }
+      itemEls.forEach((itemEl, i) => {
+        const oldItemEl = this.dropdownListEl.childNodes[i];
+        if (oldItemEl && oldItemEl !== itemEl) {
+          this.dropdownListEl.replaceChild(itemEl, oldItemEl);
+        } else if (!oldItemEl) {
+          this.dropdownListEl.appendChild(itemEl);
+        }
+      });
 
-    this.el.appendChild(dropdownListEl);
-  }
-
-  clear() {
-    while (this.el.firstChild) {
-      this.el.removeChild(this.el.firstChild);
+      this.dropdownListEl.style.display = 'block';
+      this.emptyListEl.style.display = 'none';
+    } else {
+      this.dropdownListEl.style.display = 'none';
+      this.emptyListEl.style.display = 'block';
     }
   }
 }

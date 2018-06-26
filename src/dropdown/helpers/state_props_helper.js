@@ -14,6 +14,7 @@ const DEFAULT_STATE = {
   selectedItems: [],
   items: [],
   extraItems: [],
+  offset: 0,
 };
 
 class StatePropsHelper {

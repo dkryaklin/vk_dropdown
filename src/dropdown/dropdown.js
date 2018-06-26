@@ -84,7 +84,7 @@ export default class Dropdown {
     }
 
     this.extraItemsHelper.getItems(inputValue, (extraItems) => {
-      this.statePropsHelper.setState({ extraItems });
+      this.statePropsHelper.setState({ extraItems, offset: 0 });
     });
   }
 

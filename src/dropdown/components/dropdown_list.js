@@ -5,19 +5,23 @@ import '../css/dropdown_list.pcss';
 
 const classNames = clssnms('dropdown');
 
-const MAX_ITEMS_AMOUNT = 20;
+const MAX_ITEMS_AMOUNT = 50;
 const SORT_FUNCTION = (a, b) => a.id - b.id;
 
 class DropdownListWrapper {
   constructor(statePropsHelper) {
     this.statePropsHelper = statePropsHelper;
-    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'extraItems'], this.updateList);
+
+    this.statePropsHelper.stateSubscribe(['isOpen', 'items', 'extraItems', 'offset'], this.updateList);
+    this.statePropsHelper.stateSubscribe(['isOpen'], this.resetOffset);
+    this.statePropsHelper.stateSubscribe(['inputValue'], this.scrollTopTop);
+
     this.itemsCache = {};
   }
 
   selectItem = (selectedItem) => {
     const { multiselect } = this.statePropsHelper.getProps();
-    const { selectedItems } = this.statePropsHelper.getState();
+    const { selectedItems, offset } = this.statePropsHelper.getState();
     const newState = {};
 
     if (!multiselect) {
@@ -28,7 +32,33 @@ class DropdownListWrapper {
       newState.isOpen = true;
     }
 
+    if (this.getItemsAmount(offset) < selectedItems.length + 10) {
+      newState.offset = offset + 1;
+    }
+
     this.statePropsHelper.setState(newState);
+  }
+
+  scrollTopTop = () => {
+    this.el.scrollTop = 0;
+  }
+
+  getItemsAmount = offset => (offset * MAX_ITEMS_AMOUNT) + MAX_ITEMS_AMOUNT;
+
+  resetOffset = (state) => {
+    if (!state.isOpen) {
+      this.statePropsHelper.setState({ offset: 0 });
+    } else {
+      const { selectedItems } = this.statePropsHelper.getState();
+      let offset = 0;
+
+      while (this.getItemsAmount(offset) < selectedItems.length + 10) {
+        offset += 1;
+      }
+
+      this.statePropsHelper.setState({ offset });
+      this.el.scrollTop = 0;
+    }
   }
 
   onClick = (event) => {
@@ -48,12 +78,23 @@ class DropdownListWrapper {
     event.stopPropagation();
   }
 
+  onScroll = (event) => {
+    clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      if (event.target.scrollHeight - event.target.offsetHeight - event.target.scrollTop < 300) {
+        const { offset } = this.statePropsHelper.getState();
+        this.statePropsHelper.setState({ offset: offset + 1 });
+      }
+    }, 100);
+  }
+
   render() {
     const { emptyListLabel } = this.statePropsHelper.getProps();
 
     const dropdownWrapperEl = document.createElement('div');
     dropdownWrapperEl.className = classNames('list-wrapper', { hidden: true });
     dropdownWrapperEl.onclick = this.onClick;
+    dropdownWrapperEl.onscroll = this.onScroll;
 
     this.el = dropdownWrapperEl;
     this.emptyListEl = EmptyList(emptyListLabel);
@@ -72,7 +113,7 @@ class DropdownListWrapper {
   updateList = (newState) => {
     const { showPics, searchOnServer } = this.statePropsHelper.getProps();
     const {
-      isOpen, items, inputValue, extraItems, selectedItems,
+      isOpen, items, inputValue, extraItems, selectedItems, offset,
     } = this.statePropsHelper.getState();
 
     this.el.className = classNames('list-wrapper', { hidden: !isOpen });
@@ -80,16 +121,27 @@ class DropdownListWrapper {
       return;
     }
 
-    const filteredItemsMap = {};
+    const itemsAmount = this.getItemsAmount(offset);
+
+    let filteredItemsAmount = 0;
     let filteredItems = items.filter((item) => {
+      if (filteredItemsAmount >= itemsAmount) {
+        return false;
+      }
+
       const str = `${item.first_name} ${item.last_name}`.toLowerCase();
       const toShow = advancedSearch(str, inputValue);
 
       if (toShow) {
-        filteredItemsMap[item.id] = item;
+        filteredItemsAmount += 1;
       }
 
       return toShow;
+    });
+
+    const filteredItemsMap = {};
+    filteredItems.forEach((item, i) => {
+      filteredItemsMap[item.id] = i;
     });
 
     if (!(filteredItems.length || newState.inputValue === undefined || !searchOnServer)) {
@@ -98,7 +150,7 @@ class DropdownListWrapper {
 
     filteredItems.sort(SORT_FUNCTION);
 
-    if (filteredItems.length < MAX_ITEMS_AMOUNT && extraItems.length) {
+    if (filteredItems.length < itemsAmount && extraItems.length) {
       extraItems.sort(SORT_FUNCTION);
 
       for (let i = 0; i < extraItems.length; i++) {
@@ -106,9 +158,11 @@ class DropdownListWrapper {
 
         if (!filteredItemsMap[extraItem.id]) {
           filteredItems.push(extraItem);
+        } else {
+          filteredItems[filteredItemsMap[extraItem.id]] = extraItem;
         }
 
-        if (filteredItems.length >= MAX_ITEMS_AMOUNT) {
+        if (filteredItems.length >= itemsAmount) {
           break;
         }
       }
@@ -126,6 +180,10 @@ class DropdownListWrapper {
       if (!itemEl) {
         itemEl = DropdownItem(item, showPics);
         this.itemsCache[item.id] = itemEl;
+      }
+
+      if (item.domain) {
+        itemEl.querySelector(`.${classNames('item-desc')}`).innerText = item.domain;
       }
 
       return itemEl;

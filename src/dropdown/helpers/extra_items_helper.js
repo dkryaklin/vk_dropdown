@@ -1,6 +1,6 @@
 import advancedSearch from '../helpers/search_helper';
 
-const MAX_EXTRA_ITEMS_AMOUNT = 20;
+const MAX_EXTRA_ITEMS_AMOUNT = 0;
 const COMMON_CACHE = {};
 const DEBOUNCE_TIMEOUT = 100;
 
@@ -46,7 +46,7 @@ class ExtraItemsHelper {
             extraItems.push(item);
           }
 
-          if (extraItems.length >= MAX_EXTRA_ITEMS_AMOUNT) {
+          if (extraItems.length >= MAX_EXTRA_ITEMS_AMOUNT && MAX_EXTRA_ITEMS_AMOUNT) {
             break;
           }
         }
@@ -67,7 +67,7 @@ class ExtraItemsHelper {
 
     const params = [
       'user_id=5',
-      'count=200',
+      'count=1000',
       'fields=domain,photo_100',
       'v=5.78',
       'access_token=919ba15b919ba15b919ba15bfe91ff71f19919b919ba15bcabf7c94072d7fcbb2167c4c',
